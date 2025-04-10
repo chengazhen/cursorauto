@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor 网站导航</title>
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- 引入 Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入 Bootstrap 样式 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #000;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            position: relative;
+        }
+        .sidebar {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+       
+        .sidebar a {
+            display: block;
+            color: #6c5ce7;
+            text-decoration: none;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .sidebar a:hover {
+            background-color: #6c5ce7;
+            color: white;
+        }
+        .url-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+        }
+        .url-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .category-title {
+            margin: 2rem 0 1rem;
+            padding: 1rem;
+            color: #fff;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
+        }
+        .card-title {
+            color: #2d3436;
+            font-weight: 600;
+        }
+        .card-text {
+            color: #636e72;
+        }
+        h1 {
+            color: #2d3436;
+            font-weight: bold;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #6c5ce7, #a29bfe);
+            border-radius: 2px;
+        }
+        .download-btn {
+            background-color: #6c5ce7;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        .download-btn:hover {
+            background-color: #5849c4;
+            color: white;
+        }
+        .download-btn.outline {
+            background-color: transparent;
+            border: 1px solid #6c5ce7;
+            color: #6c5ce7;
+        }
+        .download-btn.outline:hover {
+            background-color: #6c5ce7;
+            color: white;
+        }
+        .github-stats {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+            color: #6c5ce7;
+            font-size: 14px;
+        }
+        .github-stats svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+            fill: currentColor;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .badge.online {
+            background-color: #6c5ce7;
+            color: white;
+        }
+        .badge.stars {
+            background-color: #4834d4;
+            color: white;
+        }
+        .badge.forks {
+            background-color: #686de0;
+            color: white;
+        }
+        .badges-container {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="sidebar">
+            <a v-for="(category, categoryName) in categorizedUrls" :key="categoryName" :href="'#' + categoryName">
+                {{ categoryName }}
+            </a>
+        </div>
+        <div class="content-wrapper">
+            <h1 class="text-center mb-4">Cursor 网站导航</h1>
+            
+            <!-- 按分类展示网址 -->
+            <div v-for="(category, categoryName) in categorizedUrls" :key="categoryName" :id="categoryName">
+                <h3 class="category-title">{{ categoryName }}</h3>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <div v-for="(url, index) in category" :key="index" class="col">
+                        <div class="card url-card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ url.title }}</h5>
+                                <p class="card-text small">{{ url.description }}</p>
+                                <div class="badges-container">
+                                    <span v-if="url.badge" class="badge online">{{ url.badge }}</span>
+                                    <span v-if="url.stars" class="badge stars">
+                                        <svg class="me-1" style="width: 14px; height: 14px;" viewBox="0 0 16 16">
+                                            <path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
+                                        </svg>
+                                        {{ url.stars }}
+                                    </span>
+                                    <span v-if="url.forks" class="badge forks">
+                                        <svg class="me-1" style="width: 14px; height: 14px;" viewBox="0 0 16 16">
+                                            <path fill="currentColor" d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75v-.878a2.25 2.25 0 11-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878a2.25 2.25 0 111.5 0zM4.75 3a.75.75 0 00-.75.75v.878A2.25 2.25 0 013 7.5h-.5a.75.75 0 00-.75.75v3.5c0 .414.336.75.75.75h1a.75.75 0 00.75-.75v-3.5a.75.75 0 00-.75-.75H3a.75.75 0 01-.75-.75V3.75A.75.75 0 013 3h1.75zM9 3a.75.75 0 01.75.75v.878A2.25 2.25 0 0011 7.5h.5a.75.75 0 01.75.75v3.5a.75.75 0 01-.75.75h-1a.75.75 0 01-.75-.75v-3.5a.75.75 0 01.75-.75H11a.75.75 0 00.75-.75V3.75A.75.75 0 0011 3H9z"/>
+                                        </svg>
+                                        {{ url.forks }}
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-end">
+                                    <div>
+                                        <a :href="url.url" target="_blank" class="download-btn">访问链接</a>
+                                        <a v-if="url.todesk" :href="url.todesk" target="_blank" class="download-btn outline ms-2">备用链接</a>
+                                        <a v-if="url.docs" :href="url.docs" target="_blank" class="download-btn outline ms-2">在线文档</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                urls: [
+                    {
+                        category: '官方网站',
+                        title: 'Cursor 官网',
+                        url: 'https://www.cursor.com/',
+                        description: 'Cursor 官方网站，提供最新版本下载、功能介绍和文档',
+                        badge: '官方'
+                    },
+                  
+                    {
+                      category: '开源工具',
+                      title: 'Cursor Auto Free',
+                      url: 'https://github.com/chengazhen/cursor-auto-free',
+                      description: 'Cursor Pro 自动化工具，提供自动注册、机器码重置等功能，支持多平台，提供详细的在线文档',
+                      stars: '8k',
+                      forks: '1.2k',
+                      badge: 'Python',
+                      docs: 'https://cursor-auto-free-doc.vercel.app'
+                    },
+                    {
+                        category: '开源工具',
+                        title: 'Cursor Free VIP',
+                        url: 'https://github.com/yeongpin/cursor-free-vip',
+                        description: '支持最新版本的 Cursor Pro 自动化工具，提供 Google/GitHub OAuth 认证、自动注册、机器码重置等功能，支持多语言界面，适用于 Windows/macOS/Linux',
+                        stars: '8k',
+                        forks: '1k',
+                        badge: 'Python',
+                        docs: 'https://raw.githubusercontent.com/yeongpin/cursor-free-vip/main/README.md'
+                    },
+                    {
+                        category: '开源工具',
+                        title: 'Fake Cursor',
+                        url: 'https://github.com/Angels-Ray/fake-rosrus',
+                        description: '一个用于重新生成 Cursor 设备 ID 和设置 Access Token 的 VSCode 扩展，支持修补机器码、重置设备 ID 等功能',
+                        stars: '295',
+                        badge: 'VSCode'
+                    },
+                    {
+                        category: '实用工具',
+                        title: 'Cursor 剩余使用量查询',
+                        url: 'https://cursor-remain.deno.dev/',
+                        description: '批量查询 Cursor 账号的使用量，可以快速查看 GPT-4 的剩余额度',
+                        badge: '在线工具'
+                    },
+                    {
+                        category: '开源工具',
+                        title: 'Cursor Helper',
+                        url: 'https://github.com/yuaotian/go-cursor-help',
+                        description: '解决 Cursor 在免费订阅期间出现使用限制的问题，支持 Windows、macOS 和 Linux 平台，提供一键重置功能',
+                        stars: '18.6k',
+                        forks: '2.3k',
+                        badge: 'Go'
+                    },
+                    {
+                        category: '开源工具',
+                        title: 'Cursor Shadow Patch',
+                        url: 'https://github.com/zetaloop/cursor-shadow-patch',
+                        description: '实验性的 Cursor 补丁工具，用于修改机器码，支持 Windows、macOS 和 Linux 平台，需要 Python 3.10+',
+                        stars: '728',
+                        forks: '100',
+                        badge: 'Python'
+                    },
+                    {
+                        category: '下载资源',
+                        title: 'Cursor 历史版本下载',
+                        url: 'https://downloader-cursor.deno.dev/',
+                        description: '提供 Cursor 各个历史版本的下载链接，支持 Windows、macOS 和 Linux 平台',
+                        todesk: 'https://downloader-cursor.deno.dev/',
+                        badge: 'Deno'
+                    },
+                   
+                ]
+            },
+            computed: {
+                categorizedUrls() {
+                    const categories = {};
+                    this.urls.forEach(url => {
+                        if (!categories[url.category]) {
+                            categories[url.category] = [];
+                        }
+                        categories[url.category].push(url);
+                    });
+                    return categories;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
